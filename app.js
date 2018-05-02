@@ -121,18 +121,32 @@ app.post("/campgrounds/:id/comments", function(req, res){
    //redirect campground show page
 });
 
-// ============
-//  AUTH ROUTES
-// ============
+// ========================
+//  AUTH ROUTES for YELPCAMP
+// ========================
 
 // show register form
 app.get("/register", function(request, res){
 	res.render("register");
 });
+// handle sign up logic
+app.post("/register", function(req,res){
+    var newUser = new User({username: req.body.username});
+    User.register(newUser, req.body.password, function(err, user){
+        if(err){
+            console.log(err);
+            return res.render("register");
+        }
+        passport.authenticate("local")(req, res, function(){
+            res.redirect("/campgrounds");
+        });
+    });
+});
 
 
-
-
+// ==========================
+//  Start Server for YELPCAMP
+// ==========================
 app.listen(process.env.PORT, process.env.IP, function(){
    console.log("The YelpCamp Server Has Started!");
 });
